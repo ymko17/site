@@ -1,97 +1,68 @@
-/* --- 0. FORCE SCROLL TO TOP ON REFRESH --- */
-if (history.scrollRestoration) {
-    history.scrollRestoration = 'manual';
-} else {
-    window.onbeforeunload = function () {
-        window.scrollTo(0, 0);
-    }
-}
-
-/* --- 1. INITIAL SETUP & STATE RESTORATION --- */
+/* --- 1. INITIAL SETUP --- */
 document.addEventListener("DOMContentLoaded", () => {
     
-    // A. RESTORE TAB AND SCROLL POSITION (Memory)
+    // A. RESTORE STATE
     const savedTab = localStorage.getItem('ymkoActiveTab') || 'projects';
     const savedScroll = parseInt(localStorage.getItem('ymkoScrollPos')) || 0;
-
     const projectsSection = document.getElementById('portfolio-anchor');
     const aboutSection = document.getElementById('about-section');
 
-    // 1. Set the correct tab immediately
     if (savedTab === 'about') {
-        projectsSection.classList.remove('active-section');
-        projectsSection.classList.add('hidden-section');
-        aboutSection.classList.remove('hidden-section');
-        aboutSection.classList.add('active-section');
+        projectsSection.classList.remove('active-section'); projectsSection.classList.add('hidden-section');
+        aboutSection.classList.remove('hidden-section'); aboutSection.classList.add('active-section');
     } else {
-        aboutSection.classList.remove('active-section');
-        aboutSection.classList.add('hidden-section');
-        projectsSection.classList.remove('hidden-section');
-        projectsSection.classList.add('active-section');
+        aboutSection.classList.remove('active-section'); aboutSection.classList.add('hidden-section');
+        projectsSection.classList.remove('hidden-section'); projectsSection.classList.add('active-section');
     }
 
-    // 2. Force Scroll to Saved Position
     if (savedScroll > 0) {
-        document.documentElement.style.scrollBehavior = 'auto'; 
+        document.documentElement.style.scrollBehavior = 'auto';
         window.scrollTo(0, savedScroll);
-        setTimeout(() => {
-            document.documentElement.style.scrollBehavior = 'smooth'; 
-        }, 100);
+        setTimeout(() => { document.documentElement.style.scrollBehavior = 'smooth'; }, 100);
     }
 
-    // B. REVEAL ANIMATION OBSERVER
+    // B. REVEAL ANIMATION
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("active");
-            }
+            if (entry.isIntersecting) { entry.target.classList.add("active"); }
         });
     }, { threshold: 0.1 });
-
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     
-    // C. MODAL LISTENERS
+    // C. MODAL CLOSING LOGIC (SETUP LISTENERS ONCE)
     const closeBtn = document.getElementById("close-modal");
     const modal = document.getElementById("video-modal");
+    
     if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (modal) window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
 
-    // --- NEW FIX: FORCE VIDEO FILTER ON LOAD ---
-    // This tells the script: "Don't wait for a click. Filter by video NOW."
-    filterProjects('video'); 
+    // D. CRITICAL FIX: FORCE VIDEO FILTER ON LOAD
+    // This line ensures that only videos are shown when the site opens
+    filterProjects('video');
 });
 
-/* --- 2. SAVE SCROLL POSITION ON REFRESH/EXIT --- */
-window.addEventListener('beforeunload', () => {
-    localStorage.setItem('ymkoScrollPos', window.scrollY);
-});
+/* --- 2. SAVE STATE --- */
+window.addEventListener('beforeunload', () => { localStorage.setItem('ymkoScrollPos', window.scrollY); });
 
 /* --- 3. SWITCH TABS --- */
 function switchTab(tabName, shouldScroll = true) {
     const projectsSection = document.getElementById('portfolio-anchor');
     const aboutSection = document.getElementById('about-section');
-
     localStorage.setItem('ymkoActiveTab', tabName);
 
-    if (tabName === 'about') {
-        projectsSection.classList.remove('active-section');
-        projectsSection.classList.add('hidden-section');
-        aboutSection.classList.remove('hidden-section');
-        aboutSection.classList.add('active-section');
-        
-        if (shouldScroll) {
-            setTimeout(() => { aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-        }
+    const show = (el) => { el.classList.remove('hidden-section'); el.classList.add('active-section'); };
+    const hide = (el) => { el.classList.remove('active-section'); el.classList.add('hidden-section'); };
 
-    } else if (tabName === 'projects') {
-        aboutSection.classList.remove('active-section');
-        aboutSection.classList.add('hidden-section');
-        projectsSection.classList.remove('hidden-section');
-        projectsSection.classList.add('active-section');
-        
-        if (shouldScroll) {
-            setTimeout(() => { projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-        }
+    if (tabName === 'about') {
+        hide(projectsSection); show(aboutSection);
+        if (shouldScroll) setTimeout(() => { aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+    } else {
+        hide(aboutSection); show(projectsSection);
+        if (shouldScroll) setTimeout(() => { projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
     }
 }
 
@@ -99,26 +70,22 @@ function switchTab(tabName, shouldScroll = true) {
 function filterProjects(category) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText.toLowerCase() === 'all')) {
-            btn.classList.add('active');
-        }
+        if (btn.innerText.toLowerCase() === category) btn.classList.add('active');
     });
 
     const projects = document.querySelectorAll('.project-item');
-    
-    // Simple visual update without full fade delay on initial load
     projects.forEach(project => {
         const cat = project.getAttribute('data-category');
         if (category === 'all' || cat === category) {
             project.classList.remove('hidden'); 
-            project.classList.remove('fade-out'); // Ensure it's visible
+            project.classList.remove('fade-out');
         } else {
             project.classList.add('hidden'); 
         }
     });
 }
 
-/* --- 5. UNIVERSAL MODAL (With Fix for Closing) --- */
+/* --- 5. UNIVERSAL MODAL (YOUTUBE + IMAGE) --- */
 function openModal(content) {
     const modal = document.getElementById("video-modal");
     const youtubeContainer = document.getElementById("youtube-container");
@@ -127,43 +94,20 @@ function openModal(content) {
     
     if (!modal || !content) return;
 
-    // 1. ACTIVATE MODAL
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden"; // Stop background scroll
-
-    // 2. ACTIVATE CLOSE LISTENERS (The Fix)
-    // We attach these NOW to ensure they work every time
-    document.getElementById("close-modal").onclick = closeModal;
-    
-    modal.onclick = function(event) {
-        // Only close if user clicked the dark background, not the video/image itself
-        if (event.target === modal) {
-            closeModal();
-        }
-    };
-
-    // 3. DETERMINE CONTENT TYPE
     const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
 
     if (isImage) {
-        // IMAGE MODE
-        youtubeContainer.style.display = "none";
-        youtubeIframe.src = ""; 
-        imagePlayer.style.display = "block";
-        imagePlayer.src = content;
+        youtubeContainer.style.display = "none"; youtubeIframe.src = ""; 
+        imagePlayer.style.display = "block"; imagePlayer.src = content;
     } else {
-        // YOUTUBE MODE
-        imagePlayer.style.display = "none";
-        youtubeContainer.style.display = "block";
+        imagePlayer.style.display = "none"; youtubeContainer.style.display = "block";
         
-        // Smart ID Extractor
         let videoId = content;
-        if (content.includes("v=")) {
-            videoId = content.split('v=')[1].split('&')[0];
-        } else if (content.includes("youtu.be/")) {
-            videoId = content.split('youtu.be/')[1];
-        }
-
+        if (content.includes("v=")) { videoId = content.split('v=')[1].split('&')[0]; } 
+        else if (content.includes("youtu.be/")) { videoId = content.split('youtu.be/')[1]; }
+        
         youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1`;
     }
 }
@@ -173,32 +117,19 @@ function closeModal() {
     const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
 
-    if (!modal) return;
-    
-    modal.classList.remove("active");
+    if (modal) modal.classList.remove("active");
     document.body.style.overflow = "auto"; 
-
-    // Stop Content
+    
     if (youtubeIframe) youtubeIframe.src = "";
     if (imagePlayer) imagePlayer.src = "";
 }
 
-/* --- 6. BACK TO TOP LOGIC --- */
+/* --- 6. BACK TO TOP --- */
 const backToTopBtn = document.getElementById("backToTop");
-
 window.addEventListener("scroll", () => {
     if (backToTopBtn) {
-        if (window.scrollY > 500) {
-            backToTopBtn.classList.add("visible");
-        } else {
-            backToTopBtn.classList.remove("visible");
-        }
+        if (window.scrollY > 500) backToTopBtn.classList.add("visible");
+        else backToTopBtn.classList.remove("visible");
     }
 });
-
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
+function scrollToTop() { window.scrollTo({ top: 0, behavior: "smooth" }); }
