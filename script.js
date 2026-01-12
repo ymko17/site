@@ -118,36 +118,37 @@ function filterProjects(category) {
     });
 }
 
-/* --- 5. UNIVERSAL MODAL (Smart YouTube + Image) --- */
+/* --- 5. UNIVERSAL MODAL FUNCTION (With Debugging) --- */
 function openModal(content) {
     const modal = document.getElementById("video-modal");
     const youtubeContainer = document.getElementById("youtube-container");
     const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
     
-    if (!modal || !content) return;
+    // SAFETY CHECK: If HTML is missing, this tells us why
+    if (!modal) { console.error("Error: Modal ID 'video-modal' not found."); return; }
+    if (!youtubeContainer) { console.error("Error: Container ID 'youtube-container' not found."); return; }
+    
+    if (!content) return;
 
-    // Check if it's an image file (ends in jpg, png, etc.)
+    // Check if it's an image
     const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
 
     modal.classList.add("active");
-    document.body.style.overflow = "hidden"; // Stop scroll
+    document.body.style.overflow = "hidden"; 
 
     if (isImage) {
-        // --- IMAGE MODE ---
+        // IMAGE MODE
         youtubeContainer.style.display = "none";
         youtubeIframe.src = ""; 
-        
         imagePlayer.style.display = "block";
         imagePlayer.src = content;
-        
     } else {
-        // --- YOUTUBE MODE ---
+        // YOUTUBE MODE
         imagePlayer.style.display = "none";
         youtubeContainer.style.display = "block";
         
-        // SMART ID EXTRACTOR:
-        // If user accidentally put the full URL, this extracts just the ID
+        // Extract ID if a full URL was pasted
         let videoId = content;
         if (content.includes("v=")) {
             videoId = content.split('v=')[1].split('&')[0];
@@ -155,7 +156,7 @@ function openModal(content) {
             videoId = content.split('youtu.be/')[1];
         }
 
-        // We add '&mute=1' because browsers BLOCK autoplay if sound is on!
+        // Embed URL
         youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1`;
     }
 }

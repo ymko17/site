@@ -367,16 +367,17 @@ a { text-decoration: none; color: white; }
     }
 }
 
-/* --- YOUTUBE MODAL STYLES --- */
+/* --- YOUTUBE MODAL CSS --- */
 .youtube-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* CRITICAL: This gives the video height (16:9) */
+    padding-bottom: 56.25%; /* CRITICAL: This forces the 16:9 Height */
     height: 0;
     overflow: hidden;
     width: 100%;
     background: #000;
     border-radius: 4px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: block; /* Ensure it's capable of showing */
 }
 
 .youtube-wrapper iframe {
