@@ -118,17 +118,17 @@ function filterProjects(category) {
     });
 }
 
-/* --- 5. UNIVERSAL MODAL (YouTube + Image) --- */
-function openModal(contentId) {
+/* --- 5. UNIVERSAL MODAL (Smart YouTube + Image) --- */
+function openModal(content) {
     const modal = document.getElementById("video-modal");
     const youtubeContainer = document.getElementById("youtube-container");
     const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
     
-    if (!modal || !contentId) return;
+    if (!modal || !content) return;
 
     // Check if it's an image file (ends in jpg, png, etc.)
-    const isImage = contentId.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+    const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
 
     modal.classList.add("active");
     document.body.style.overflow = "hidden"; // Stop scroll
@@ -136,38 +136,27 @@ function openModal(contentId) {
     if (isImage) {
         // --- IMAGE MODE ---
         youtubeContainer.style.display = "none";
-        youtubeIframe.src = ""; // Stop any video audio
+        youtubeIframe.src = ""; 
         
         imagePlayer.style.display = "block";
-        imagePlayer.src = contentId;
+        imagePlayer.src = content;
         
     } else {
         // --- YOUTUBE MODE ---
         imagePlayer.style.display = "none";
-        
         youtubeContainer.style.display = "block";
-        // We construct the embed URL automatically
-        // autoplay=1 makes it start immediately
-        youtubeIframe.src = `https://www.youtube.com/embed/${contentId}?autoplay=1&rel=0&modestbranding=1`;
-    }
-}
+        
+        // SMART ID EXTRACTOR:
+        // If user accidentally put the full URL, this extracts just the ID
+        let videoId = content;
+        if (content.includes("v=")) {
+            videoId = content.split('v=')[1].split('&')[0];
+        } else if (content.includes("youtu.be/")) {
+            videoId = content.split('youtu.be/')[1];
+        }
 
-function closeModal() {
-    const modal = document.getElementById("video-modal");
-    const youtubeIframe = document.getElementById("youtube-iframe");
-    const imagePlayer = document.getElementById("popup-image");
-
-    if (!modal) return;
-    
-    modal.classList.remove("active");
-    document.body.style.overflow = "auto"; 
-
-    // Stop Video (Crucial: clearing src stops the audio)
-    if (youtubeIframe) {
-        youtubeIframe.src = "";
-    }
-    if (imagePlayer) {
-        imagePlayer.src = "";
+        // We add '&mute=1' because browsers BLOCK autoplay if sound is on!
+        youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1`;
     }
 }
 
