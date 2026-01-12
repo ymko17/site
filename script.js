@@ -118,24 +118,32 @@ function filterProjects(category) {
     });
 }
 
-/* --- 5. UNIVERSAL MODAL FUNCTION (With Debugging) --- */
+/* --- 5. UNIVERSAL MODAL (With Fix for Closing) --- */
 function openModal(content) {
     const modal = document.getElementById("video-modal");
     const youtubeContainer = document.getElementById("youtube-container");
     const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
     
-    // SAFETY CHECK: If HTML is missing, this tells us why
-    if (!modal) { console.error("Error: Modal ID 'video-modal' not found."); return; }
-    if (!youtubeContainer) { console.error("Error: Container ID 'youtube-container' not found."); return; }
-    
-    if (!content) return;
+    if (!modal || !content) return;
 
-    // Check if it's an image
-    const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
-
+    // 1. ACTIVATE MODAL
     modal.classList.add("active");
-    document.body.style.overflow = "hidden"; 
+    document.body.style.overflow = "hidden"; // Stop background scroll
+
+    // 2. ACTIVATE CLOSE LISTENERS (The Fix)
+    // We attach these NOW to ensure they work every time
+    document.getElementById("close-modal").onclick = closeModal;
+    
+    modal.onclick = function(event) {
+        // Only close if user clicked the dark background, not the video/image itself
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+    // 3. DETERMINE CONTENT TYPE
+    const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
 
     if (isImage) {
         // IMAGE MODE
@@ -148,7 +156,7 @@ function openModal(content) {
         imagePlayer.style.display = "none";
         youtubeContainer.style.display = "block";
         
-        // Extract ID if a full URL was pasted
+        // Smart ID Extractor
         let videoId = content;
         if (content.includes("v=")) {
             videoId = content.split('v=')[1].split('&')[0];
@@ -156,9 +164,23 @@ function openModal(content) {
             videoId = content.split('youtu.be/')[1];
         }
 
-        // Embed URL
         youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1`;
     }
+}
+
+function closeModal() {
+    const modal = document.getElementById("video-modal");
+    const youtubeIframe = document.getElementById("youtube-iframe");
+    const imagePlayer = document.getElementById("popup-image");
+
+    if (!modal) return;
+    
+    modal.classList.remove("active");
+    document.body.style.overflow = "auto"; 
+
+    // Stop Content
+    if (youtubeIframe) youtubeIframe.src = "";
+    if (imagePlayer) imagePlayer.src = "";
 }
 
 /* --- 6. BACK TO TOP LOGIC --- */
