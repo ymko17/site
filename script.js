@@ -85,43 +85,55 @@ function filterProjects(category) {
     });
 }
 
-/* --- 5. UNIVERSAL MODAL (YOUTUBE + IMAGE) --- */
-function openModal(content) {
+/* --- 5. UNIVERSAL MODAL (With Vertical Support) --- */
+// We added a second parameter: 'isVertical' (defaults to false)
+function openModal(content, isVertical = false) {
     const modal = document.getElementById("video-modal");
+    const modalContent = document.querySelector(".modal-content"); // Get the wrapper to change width
     const youtubeContainer = document.getElementById("youtube-container");
     const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
     
     if (!modal || !content) return;
 
-    const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+    // 1. Activate Modal
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
 
+    // 2. Ensure Close Logic is Ready
+    document.getElementById("close-modal").onclick = closeModal;
+
+    // 3. Reset Classes (Remove vertical mode from previous clicks)
+    modalContent.classList.remove("vertical-mode");
+    youtubeContainer.classList.remove("vertical");
+
+    // 4. Check Content Type
+    const isImage = content.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+
     if (isImage) {
+        // IMAGE MODE
         youtubeContainer.style.display = "none"; youtubeIframe.src = ""; 
         imagePlayer.style.display = "block"; imagePlayer.src = content;
     } else {
+        // YOUTUBE MODE
         imagePlayer.style.display = "none"; youtubeContainer.style.display = "block";
         
+        // CHECK IF VERTICAL
+        if (isVertical) {
+            modalContent.classList.add("vertical-mode"); // Make modal narrow
+            youtubeContainer.classList.add("vertical");  // Make player tall
+        }
+        
+        // Extract ID
         let videoId = content;
         if (content.includes("v=")) { videoId = content.split('v=')[1].split('&')[0]; } 
         else if (content.includes("youtu.be/")) { videoId = content.split('youtu.be/')[1]; }
+        // Handle Shorts URL (youtube.com/shorts/ID)
+        else if (content.includes("/shorts/")) { videoId = content.split('/shorts/')[1].split('?')[0]; }
         
+        // Embed
         youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1`;
     }
-}
-
-function closeModal() {
-    const modal = document.getElementById("video-modal");
-    const youtubeIframe = document.getElementById("youtube-iframe");
-    const imagePlayer = document.getElementById("popup-image");
-
-    if (modal) modal.classList.remove("active");
-    document.body.style.overflow = "auto"; 
-    
-    if (youtubeIframe) youtubeIframe.src = "";
-    if (imagePlayer) imagePlayer.src = "";
 }
 
 /* --- 6. BACK TO TOP --- */
