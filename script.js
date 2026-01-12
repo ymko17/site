@@ -118,57 +118,56 @@ function filterProjects(category) {
     });
 }
 
-/* --- 5. UNIVERSAL MODAL FUNCTION --- */
-function openModal(file) {
+/* --- 5. UNIVERSAL MODAL (YouTube + Image) --- */
+function openModal(contentId) {
     const modal = document.getElementById("video-modal");
-    const videoPlayer = document.getElementById("popup-player");
+    const youtubeContainer = document.getElementById("youtube-container");
+    const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
     
-    if (!modal || !file) return;
+    if (!modal || !contentId) return;
 
-    // Check file extension to see if it's an image or video
-    const isImage = file.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+    // Check if it's an image file (ends in jpg, png, etc.)
+    const isImage = contentId.match(/\.(jpeg|jpg|gif|png|webp)$/i);
 
     modal.classList.add("active");
     document.body.style.overflow = "hidden"; // Stop scroll
 
     if (isImage) {
-        // SETUP IMAGE MODE
-        videoPlayer.style.display = "none";
-        videoPlayer.pause(); // Ensure video isn't playing
+        // --- IMAGE MODE ---
+        youtubeContainer.style.display = "none";
+        youtubeIframe.src = ""; // Stop any video audio
         
         imagePlayer.style.display = "block";
-        imagePlayer.src = file;
+        imagePlayer.src = contentId;
         
     } else {
-        // SETUP VIDEO MODE
+        // --- YOUTUBE MODE ---
         imagePlayer.style.display = "none";
         
-        videoPlayer.style.display = "block";
-        videoPlayer.src = file;
-        videoPlayer.play();
+        youtubeContainer.style.display = "block";
+        // We construct the embed URL automatically
+        // autoplay=1 makes it start immediately
+        youtubeIframe.src = `https://www.youtube.com/embed/${contentId}?autoplay=1&rel=0&modestbranding=1`;
     }
 }
 
 function closeModal() {
     const modal = document.getElementById("video-modal");
-    const videoPlayer = document.getElementById("popup-player");
+    const youtubeIframe = document.getElementById("youtube-iframe");
     const imagePlayer = document.getElementById("popup-image");
 
     if (!modal) return;
     
     modal.classList.remove("active");
-    document.body.style.overflow = "auto"; // Allow scroll
+    document.body.style.overflow = "auto"; 
 
-    // Reset Players
-    if (videoPlayer) {
-        videoPlayer.pause();
-        videoPlayer.src = "";
-        videoPlayer.style.display = "none";
+    // Stop Video (Crucial: clearing src stops the audio)
+    if (youtubeIframe) {
+        youtubeIframe.src = "";
     }
     if (imagePlayer) {
         imagePlayer.src = "";
-        imagePlayer.style.display = "none";
     }
 }
 
