@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YMKO Portofolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="hero-section">
+	<video class="hero-bg-video" autoplay muted loop playsinline>
+            <source src="bg-vid.webm" type="video/webm">
+            <source src="bg-vid.mp4" type="video/mp4"> </video>
+
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-number">YMKO</span>
+            <h1 class="hero-title">2025</h1>
+            <p class="hero-subtitle">IDEA / CREATE / EDIT</p>
+            
+            <div class="hero-buttons-container">
+                <a href="javascript:void(0)" class="hero-button" onclick="switchTab('about', true)">ABOUT ME</a>
+				<a href="javascript:void(0)" class="hero-button" onclick="switchTab('projects', true)">VIEW PROJECT</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="portfolio-anchor" class="content-section active-section">
+        
+        <video class="section-bg-video" autoplay muted loop playsinline>
+            <source src="bg-vid.webm" type="video/webm">
+            <source src="bg-vid.mp4" type="video/mp4">
+        </video>
+        
+        <div class="section-overlay"></div>
+		
+		<div class="content-container">
+		
+        <div class="section-header reveal">
+            <h2>Selected Works</h2>
+        </div>
+
+        <div class="filter-container reveal">
+            <button class="filter-btn active" onclick="filterProjects('video')">Video</button>
+            <button class="filter-btn" onclick="filterProjects('photo')">Photo</button>
+            <button class="filter-btn" onclick="filterProjects('music')">Music</button>
+        </div>
+
+        <div class="projects-grid">
+            
+            <div class="project-item reveal" data-category="video" onclick="openModal('video1-full.mp4')">
+                <video class="project-media" autoplay muted loop playsinline>
+                    <source src="video1-preview.mp4" type="video/mp4">
+                </video>
+                <div class="project-info">
+                    <h3 class="project-title">Bilamana Naga Sunda Bermain Horror 😊</h3>
+                    <p class="project-category">ONShannon_</p>
+                </div>
+            </div>
+
+            <div class="project-item reveal" data-category="video" onclick="openModal('video3-full.mov')">
+                <video class="project-media" autoplay muted loop playsinline>
+                    <source src="video2-preview.mp4" type="video/mp4">
+                </video>
+                <div class="project-info">
+                    <h3 class="project-title">Lombok Trip</h3>
+                    <p class="project-category">YMKO</p>
+                </div>
+            </div>
+			
+			<div class="project-item reveal vertical" data-category="video" onclick="openModal('clip1-full.mov')">
+                <video class="project-media" autoplay muted loop playsinline>
+                    <source src="video3-preview.mp4" type="video/mp4">
+                </video>
+                <div class="project-info">
+                    <h3 class="project-title">Shorts Compilation</h3>
+                    <p class="project-category">YMKO</p>
+                </div>
+            </div>
+			
+			<div class="project-item reveal" data-category="photo" onclick="openModal('photo1.jpg')">
+                <img src="photo1.jpg" alt="Neon Nights" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">Malaysia Trip</h3>
+                    <p class="project-category"></p>
+                </div>
+            </div>
+
+			<div class="project-item reveal" data-category="photo" onclick="openModal('photo2.jpg')">
+                <img src="photo2.jpg" alt="The Void" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">Malaysia Trip</h3>
+                    <p class="project-category"></p>
+                </div>
+            </div>
+
+			<div class="project-item reveal" data-category="photo" onclick="openModal('photo3.png')">
+                <img src="photo3.png" alt="Neon Nights" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">Ellen Joe x Alexandrina Sebastiane</h3>
+                    <p class="project-category">Instagram: @itsjianjian / @chzkeiki</p>
+                </div>
+            </div>
+
+			<div class="project-item reveal" data-category="photo" onclick="openModal('photo4.png')">
+                <img src="photo4.png" alt="The Void" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">New Year Event</h3>
+                    <p class="project-category">Where Winds Meet</p>
+                </div>
+            </div>
+
+            <div class="project-item reveal" data-category="music">
+                <img src="logo-me2.png" alt="Album Art" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">ID</h3>
+                    <p class="project-category">Original Music</p>
+                    <audio controls class="audio-player">
+                        <source src="music1.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+			
+			<div class="project-item reveal" data-category="music">
+                <img src="logo-me2.png" alt="Album Art" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">ID</h3>
+                    <p class="project-category">Original Music</p>
+                    <audio controls class="audio-player">
+                        <source src="music2.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+			
+			<div class="project-item reveal" data-category="music">
+                <img src="logo-me2.png" alt="Album Art" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">Ardhito Pramono - Here We Go Again / Fanboi</h3>
+                    <p class="project-category">Cover by: @Zawaraaaa</p>
+                    <audio controls class="audio-player">
+                        <source src="music3.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+			
+			<div class="project-item reveal" data-category="music">
+                <img src="logo-me2.png" alt="Album Art" class="project-media">
+                <div class="project-info">
+                    <h3 class="project-title">Kessoku Band - Rock n' Roll, Morning Light Falls on You</h3>
+                    <p class="project-category">Cover by: @manganWONGZ (Demit)</p>
+                    <audio controls class="audio-player">
+                        <source src="music4.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+
+        </div>
+		</div>
+    </section>
+
+    <section id="about-section" class="content-section hidden-section">
+	
+	<video class="section-bg-video" autoplay muted loop playsinline>
+            <source src="bg-vid.webm" type="video/webm">
+            <source src="bg-vid.mp4" type="video/mp4">
+        </video>
+        
+        <div class="section-overlay"></div>
+
+        <div class="content-container">
+        <div class="about-container">
+            
+            <div class="about-image-wrapper reveal">
+                <img src="logo-me.png" alt="Me" class="about-image">
+            </div>
+
+            <div class="about-content reveal">
+                <h2 class="about-title">HELLO, I'M YMKO</h2>
+                <p class="about-bio">
+					Pronounced = YUMEKO
+					<br><br>
+                    I am a creative generalist based in Jakarta, Indonesia. 
+                    Specializing in video editing and audio works, 
+                    I hope we can work together to create the best work of art.
+                    <br><br>
+                    Currently available for freelance projects.
+                </p>
+
+                <div class="social-links">
+                    <a href="https://www.instagram.com/ymko17" target="_blank" class="social-btn">INSTAGRAM</a>
+                    <a href="https://x.com/ymko_17" target="_blank" class="social-btn">TWITTER / X</a>
+                    <a href="https://www.youtube.com/@Yumeko17" target="_blank" class="social-btn">YOUTUBE</a>
+                    <a href="mailto:afdelp17@gmail.com" class="social-btn">EMAIL</a>
+                </div>
+            </div>
+
+        </div></div>
+    </section>
+
+    <div id="video-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal" class="close-btn">✕ CLOSE</button>
+            
+            <video id="popup-player" class="full-media-player" controls style="display:none;">
+                <source src="" type="video/mp4">
+            </video>
+
+            <img id="popup-image" class="full-media-player" src="" alt="" style="display:none;">
+            
+        </div>
+    </div>
+	<button id="backToTop" onclick="scrollToTop()">↑ TOP</button>
+    <script src="script.js"></script>
+</body>
+</html>
